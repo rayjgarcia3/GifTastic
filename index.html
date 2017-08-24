@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>GIF-Tastic!</title>
+</head>
+
+<body>
+ <div class="container">
+<div id="peoplebuttons">
+
+<button class="btn btn-info person" data-name="Matt Damon">Matt Damon</button>
+
+<button class="btn btn-info person" data-name="Donald Trump">Donald Trump</button>
+
+<button class="btn btn-info person" data-name="Jon Snow" style=>Jon Snow</button>
+
+<button class="btn btn-info person" data-name="Chris Farley">Chris Farley</button>
+
+<button class="btn btn-info person" data-name="Gordon Ramsay">Gordon Ramsay</button>
+</div>
+</div>
+</div>
+<br>
+<div id="gifs-appear-here" style="float: left"></div>
+
+  <div style="float:left;">
+ <h4>Add a Person</h4>
+    <form id="gif-form">
+        <label for="gif-input"></label>
+        <input type="text" value="" id="gif-input"><br><br>
+        
+        <input type="submit" name="Button" class="btn btn-success" id="theButton">
+    </form>
+</div>
+
+
+  
+  
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script type="text/javascript">
+  $(document).ready(function(){
+
+    $("button").on("click", function() {
+      var person = $(this).data("name");
+      var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+        person + "&api_key=dc6zaTOxFJmzC&limit=10";
+
+      $.ajax({
+          url: queryURL,
+          method: "GET"
+        })
+        .done(function(response) {
+
+          var results = response.data;
+
+          for (var i = 0; i < results.length; i++) {
+
+            var gifDiv = $("<div>");
+
+            var p = $("<p>")
+
+            p.text(results[i].rating);
+
+            var personImage = $("<img>");
+
+            personImage.addClass("perImg")
+
+            personImage.attr("src", results[i].images.fixed_height.url);
+
+            personImage.attr("data-still", results[i].images.fixed_height.url)
+
+            personImage.attr("data-animate", results[i].images.fixed_height.url)
+
+            .attr("data-state", "still");
+
+            gifDiv.prepend(p);
+            gifDiv.append(personImage);
+            gifDiv.prependTo($("#gifs-appear-here"));
+          }
+
+          $('.perImg').on('click', function() {
+            
+                    var state = $(this).attr('data-state'); 
+                    console.log(this);
+
+                    if (state == 'still') {
+                    
+                    $(this).attr('src', $(this).data('animate'));
+                    
+                    $(this).attr('data-state', 'animate');
+
+                    } else {
+                            
+                    $(this).attr('src', $(this).data('still'));
+                    
+                    $(this).attr('data-state', 'still');
+                    }      
+                });
+            });
+    });
+
+    var person = [""];
+
+    $('#theButton').on('click', function(){
+          var peoplebutton = $("#gif-input").val();            
+          var newButton = $("<button/>").addClass( "btn btn-info person").attr('data-name',peoplebutton).html(peoplebutton).css({'margin': '5px'});
+            
+            $("#peoplebuttons").append(newButton);
+                console.log("Work");
+
+            queryURL = "https://api.giphy.com/v1/gifs/search?q=" + peoplebutton + "&api_key=dc6zaTOxFJmzC&limit=10";
+                console.log(peoplebutton);
+
+            $.ajax({
+            url: queryURL,
+            method: 'GET'
+            })
+
+            .done(function(response) {
+
+            var results = response.data;
+
+                for (var i = 0; i < results.length; i++) {
+
+                    var personDiv = $("<div>");
+
+                    var p =$("<p>");
+
+                    p.text(results[i].rating);
+
+                    var personImage = $("<img>");
+
+                    personImage.addClass("perImg")
+
+                    personImage.attr("src", results[i].images.fixed_height_still.url);
+
+                    personImage.attr("data-still", results[i].images.fixed_height_still.url)
+
+                    personImage.attr("data-animate", results[i].images.fixed_height.url)
+
+                    .attr("data-state", "still");
+
+                    personDiv.append(p);
+
+                    personDiv.append(personImage);
+
+                    personDiv.prependTo($("#gifs-appear-here"));
+                }
+
+                $(".perImg").on("click", function() {
+            
+                    var state = $(this).attr("data-state"); 
+                    console.log(this);
+
+                    if (state == "still") {
+                    
+                    $(this).attr("src", $(this).data("animate"));
+                    
+                    $(this).attr("data-state", "animate");
+
+                    } else {
+                            
+                    $(this).attr("src", $(this).data("still"));
+                    
+                    $(this).attr("data-state", "still");
+                    }      
+                });
+            });
+
+            $("#gif-input").val("");
+            return false;
+        })
+  
+});
+
+
+
+
+
+         </script>
+ </div>
+</body>
+
+</html>
